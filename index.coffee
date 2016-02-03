@@ -19,7 +19,7 @@ merge = (base, more)->
 
 init = (defaultHandler)->
 
-    defaultHandler or= (name, kwargs)-> throw Error "Method not registered: #{method}"
+    defaultHandler or= (name, kwargs)-> throw Error "Method not registered: #{name}"
 
     handlers = {}
     signatures = {}
@@ -39,7 +39,7 @@ init = (defaultHandler)->
                 _register name, handler
             else
                 [namespace, methods] = args
-                throw Error "Unexpected params" unless 'object' is typeof methods
+                throw Error "Second paramter should be an object" unless 'object' is typeof methods
                 for own name, handler of methods
                     if 'function' is typeof handler
                         _register "#{namespace}.#{name}", handler, methods["#{name}_defaults"]
@@ -53,11 +53,11 @@ init = (defaultHandler)->
         if name not of handlers
             return defaultHandler name, kwargs
         if 'object' isnt typeof kwargs
-            throw Error 'Params must be passed as an object'
+            throw Error 'Parameters must be passed as an object'
         signatures[name] = getSignature handlers[name] unless name of signatures
         preparedParams = []
         for varname in Object.keys kwargs
-            throw Error "Unexpected param: #{name}" unless varname in signatures[name]
+            throw Error "Unexpected parameter: #{name}" unless varname in signatures[name]
         for varname in signatures[name]
             if varname not of kwargs
                 if defaults[name] and varname of defaults[name]
@@ -65,7 +65,7 @@ init = (defaultHandler)->
                 else if varname is "kwargs"
                     preparedParams.push merge defaults[name], kwargs
                 else
-                    throw Error "Param missing: #{varname}"
+                    throw Error "Parameter missing: #{varname}"
             else
                 preparedParams.push kwargs[varname]
         handlers[name] preparedParams...
