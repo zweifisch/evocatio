@@ -8,6 +8,10 @@ fns = require("evocatio")();
 
 fns.register("whoami", => "nobody");
 
+fns.register("context", function(){
+    return this.id;
+});
+
 fns.register("namespace.async", {
     operation: function*(arg, more){
         yield asyncoperation(arg);
@@ -15,6 +19,7 @@ fns.register("namespace.async", {
 });
 
 fns.dispatch("whoami", {});  // "nobody"
+fns.dispatch("context", {}, {id: "2"});  // "2"
 fns.dispatch("namespace.async.operation", {arg: null, more: false});  // promise
 ```
 

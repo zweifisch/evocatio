@@ -44,3 +44,9 @@ describe 'evocatio', ->
     it "should handle unregistered method", ->
         fns = evocatio (name, kwargs)-> "#{name} is not here"
         fns.dispatch("unknow", {}).should.equal "unknow is not here"
+
+    it "should bind context", ->
+        fns = evocatio()
+        fns.register "ctx", (param)->
+            [@session, param]
+        fns.dispatch("ctx", {param: "bar"}, {session: "foo"}).should.deep.equal ["foo", "bar"]

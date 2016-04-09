@@ -49,7 +49,7 @@ init = (defaultHandler)->
         else
             throw Error "Incorrect call to register"
 
-    dispatch = (name, kwargs)->
+    dispatch = (name, kwargs, context)->
         if name not of handlers
             return defaultHandler name, kwargs
         if 'object' isnt typeof kwargs
@@ -57,7 +57,7 @@ init = (defaultHandler)->
         signatures[name] = getSignature handlers[name] unless name of signatures
         preparedParams = []
         for varname in Object.keys kwargs
-            throw Error "Unexpected parameter: #{name}" unless varname in signatures[name]
+            throw Error "Unexpected parameter: #{varname}" unless varname in signatures[name]
         for varname in signatures[name]
             if varname not of kwargs
                 if defaults[name] and varname of defaults[name]
@@ -68,7 +68,7 @@ init = (defaultHandler)->
                     throw Error "Parameter missing: #{varname}"
             else
                 preparedParams.push kwargs[varname]
-        handlers[name] preparedParams...
+        handlers[name].apply context, preparedParams
 
     register: register
     dispatch: dispatch
