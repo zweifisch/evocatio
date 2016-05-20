@@ -1,6 +1,7 @@
 co = require 'co'
 
 getSignature = (fn)->
+    return fn.__args__ if fn.__args__
     params = /\(([\s\S]*?)\)/.exec fn
     if params and params[1].trim()
         params[1].split(',').map (x)-> x.trim()
